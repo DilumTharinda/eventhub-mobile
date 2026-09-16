@@ -45,3 +45,9 @@ export async function cancelBooking(bookingId: string, eventId: string, seatsToR
     tx.update(bookingRef, { status: "cancelled" });
   });
 }
+
+export async function getEventBookings(eventId: string): Promise<Booking[]> {
+  const q = query(collection(db, "bookings"), where("eventId", "==", eventId));
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+}
