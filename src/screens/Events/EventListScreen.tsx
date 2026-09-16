@@ -50,7 +50,7 @@ export default function EventListScreen({ navigation }: any) {
   };
 
   const filteredEvents = events.filter((e) => {
-    const matchesSearch = e.name.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = (e.name || "").toLowerCase().includes((search || "").toLowerCase());
     const matchesCategory = category === "All" || e.category === category;
     return matchesSearch && matchesCategory;
   });
@@ -73,9 +73,9 @@ export default function EventListScreen({ navigation }: any) {
               <Ionicons name={isFav ? "heart" : "heart-outline"} size={24} color={isFav ? "red" : "gray"} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.eventInfo}><Ionicons name="calendar-outline" /> {new Date(item.dateTime).toLocaleDateString()}</Text>
-          <Text style={styles.eventInfo}><Ionicons name="location-outline" /> {item.location}</Text>
-          <Text style={styles.eventPrice}>${item.price.toFixed(2)}</Text>
+          <Text style={styles.eventInfo}><Ionicons name="calendar-outline" /> {item.dateTime ? new Date(item.dateTime).toLocaleDateString() : "TBD"}</Text>
+          <Text style={styles.eventInfo}><Ionicons name="location-outline" /> {item.location || "TBA"}</Text>
+          <Text style={styles.eventPrice}>${(item.price || 0).toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
     );
