@@ -8,6 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { getUserBookings, cancelBooking } from "../../services/bookingService";
 import { getEventById } from "../../services/eventService";
+import { scheduleLocalNotification } from "../../services/notificationService";
 import { Booking, EventItem } from "../../types";
 
 type BookingWithEvent = Booking & { event?: EventItem | null };
@@ -62,6 +63,8 @@ export default function MyBookingsScreen() {
             try {
               setCancelingId(booking.id);
               await cancelBooking(booking.id, booking.eventId, booking.numberOfSeats);
+              const eventName = booking.event ? booking.event.name : "the event";
+              await scheduleLocalNotification("Booking Cancelled", `You have successfully cancelled your booking for ${eventName}.`);
               Alert.alert("Cancelled", "Your booking has been cancelled successfully.");
               fetchBookings();
             } catch (error: any) {

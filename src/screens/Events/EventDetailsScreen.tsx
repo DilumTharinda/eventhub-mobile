@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getEventById } from "../../services/eventService";
 import { bookEvent } from "../../services/bookingService";
 import { useAuth } from "../../context/AuthContext";
+import { scheduleLocalNotification } from "../../services/notificationService";
 import { EventItem } from "../../types";
 
 export default function EventDetailsScreen({ route, navigation }: any) {
@@ -41,6 +42,7 @@ export default function EventDetailsScreen({ route, navigation }: any) {
     try {
       setBookingLoading(true);
       await bookEvent(event.id, user.uid, seats, event.price);
+      await scheduleLocalNotification("Booking Confirmed! 🎉", `You have successfully booked ${seats} seat(s) for ${event.name}.`);
       Alert.alert("Success", "Booking confirmed!");
       // Navigate back or to MyBookings
       navigation.goBack();
