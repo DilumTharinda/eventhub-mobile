@@ -73,21 +73,21 @@ export default function EventDetailsScreen({ route, navigation }: any) {
           style={styles.image} 
         />
         <View style={styles.content}>
-          <Text style={styles.title}>{event.name}</Text>
+          <Text style={styles.title}>{event.name || "Unnamed Event"}</Text>
           
           <View style={styles.infoRow}>
             <Ionicons name="calendar" size={20} color="#4A47F5" />
-            <Text style={styles.infoText}>{new Date(event.dateTime).toLocaleString()}</Text>
+            <Text style={styles.infoText}>{event.dateTime ? new Date(event.dateTime).toLocaleString() : "TBD"}</Text>
           </View>
           
           <View style={styles.infoRow}>
             <Ionicons name="location" size={20} color="#4A47F5" />
-            <Text style={styles.infoText}>{event.location}</Text>
+            <Text style={styles.infoText}>{event.location || "TBA"}</Text>
           </View>
           
           <View style={styles.infoRow}>
             <Ionicons name="pricetag" size={20} color="#4A47F5" />
-            <Text style={styles.infoText}>${event.price.toFixed(2)}</Text>
+            <Text style={styles.infoText}>${(event.price || 0).toFixed(2)}</Text>
           </View>
 
           <View style={styles.infoRow}>
@@ -96,7 +96,7 @@ export default function EventDetailsScreen({ route, navigation }: any) {
           </View>
 
           <Text style={styles.sectionTitle}>About Event</Text>
-          <Text style={styles.description}>{event.description}</Text>
+          <Text style={styles.description}>{event.description || "No description provided."}</Text>
         </View>
       </ScrollView>
 

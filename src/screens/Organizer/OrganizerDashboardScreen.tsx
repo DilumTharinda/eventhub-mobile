@@ -59,12 +59,12 @@ export default function OrganizerDashboardScreen({ navigation }: any) {
     <View style={styles.card}>
       <Image source={{ uri: item.imageUrl || "https://via.placeholder.com/150" }} style={styles.image} />
       <View style={styles.cardContent}>
-        <Text style={styles.eventName}>{item.name}</Text>
+        <Text style={styles.eventName}>{item.name || "Unnamed Event"}</Text>
         <Text style={styles.eventInfo}>
-          <Ionicons name="calendar" /> {new Date(item.dateTime).toLocaleDateString()}
+          <Ionicons name="calendar" /> {item.dateTime ? new Date(item.dateTime).toLocaleDateString() : "TBD"}
         </Text>
         <Text style={styles.eventInfo}>
-          <Ionicons name="people" /> {item.totalSeats - item.availableSeats} / {item.totalSeats} Booked
+          <Ionicons name="people" /> {(item.totalSeats || 0) - (item.availableSeats || 0)} / {item.totalSeats || 0} Booked
         </Text>
         
         <View style={styles.actions}>
