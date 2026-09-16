@@ -10,12 +10,12 @@ import { updateUserProfile } from "../../services/userService";
 export default function ProfileScreen() {
   const { user, profile, logout } = useAuth();
   
-  const [displayName, setDisplayName] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (profile?.displayName) {
-      setDisplayName(profile.displayName);
+    if (profile?.name) {
+      setName(profile.name);
     }
   }, [profile]);
 
@@ -23,7 +23,7 @@ export default function ProfileScreen() {
     if (!user) return;
     setLoading(true);
     try {
-      await updateUserProfile(user.uid, { displayName });
+      await updateUserProfile(user.uid, { name });
       Alert.alert("Success", "Profile updated successfully!");
     } catch (e: any) {
       Alert.alert("Error", e.message);
@@ -58,8 +58,8 @@ export default function ProfileScreen() {
         <Text style={styles.label}>Display Name</Text>
         <TextInput
           style={styles.input}
-          value={displayName}
-          onChangeText={setDisplayName}
+          value={name}
+          onChangeText={setName}
           placeholder="Enter your name"
         />
 
