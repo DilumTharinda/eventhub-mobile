@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { 
   View, Text, StyleSheet, Image, ActivityIndicator, 
-  ScrollView, TouchableOpacity 
+  ScrollView, TouchableOpacity, Alert 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getEventById } from "../../services/eventService";
+import { bookEvent } from "../../services/bookingService";
+import { useAuth } from "../../context/AuthContext";
 import { EventItem } from "../../types";
 
 export default function EventDetailsScreen({ route, navigation }: any) {
   const { eventId } = route.params;
+  const { user } = useAuth();
   const [event, setEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bookingLoading, setBookingLoading] = useState(false);
   const [seats, setSeats] = useState(1);
 
   useEffect(() => {
@@ -26,6 +30,26 @@ export default function EventDetailsScreen({ route, navigation }: any) {
     };
     fetchEvent();
   }, [eventId]);
+
+  const handleBook = async () => {
+    if (!user) {
+      Alert.alert("Error", "You must be logged in to book an event.");
+      return;
+    }
+    if (!event) return;
+
+    try {
+      setBookingLoading(true);
+      await bookEvent(event.id, user.uid, seats, event.price);
+      Alert.alert("Success", "Booking confirmed!");
+      // Navigate back or to MyBookings
+      navigation.goBack();
+    } catch (error: any) {
+      Alert.alert("Booking failed", error.message);
+    } finally {
+      setBookingLoading(false);
+    }
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#4A47F5" style={styles.loader} />;
@@ -74,12 +98,12 @@ export default function EventDetailsScreen({ route, navigation }: any) {
         </View>
       </ScrollView>
 
-      {/* Booking controls (logic to be implemented in next step) */}
       <View style={styles.footer}>
         <View style={styles.seatSelector}>
           <TouchableOpacity 
             style={styles.seatButton} 
             onPress={() => setSeats(Math.max(1, seats - 1))}
+            disabled={bookingLoading}
           >
             <Ionicons name="remove" size={24} color="#333" />
           </TouchableOpacity>
@@ -87,12 +111,19 @@ export default function EventDetailsScreen({ route, navigation }: any) {
           <TouchableOpacity 
             style={styles.seatButton} 
             onPress={() => setSeats(Math.min(event.availableSeats, seats + 1))}
+            disabled={bookingLoading}
           >
             <Ionicons name="add" size={24} color="#333" />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.bookButton}>
-          <Text style={styles.bookButtonText}>Book - ${(event.price * seats).toFixed(2)}</Text>
+        <TouchableOpacity 
+          style={[styles.bookButton, bookingLoading && styles.bookButtonDisabled]} 
+          onPress={handleBook}
+          disabled={bookingLoading || event.availableSeats === 0}
+        >
+          <Text style={styles.bookButtonText}>
+            {bookingLoading ? "Processing..." : `Book - $${(event.price * seats).toFixed(2)}`}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -124,5 +155,6 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: "#4A47F5", paddingVertical: 14, 
     borderRadius: 8, alignItems: "center" 
   },
+  bookButtonDisabled: { backgroundColor: "#a09ff5" },
   bookButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
