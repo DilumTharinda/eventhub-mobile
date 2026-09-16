@@ -11,6 +11,8 @@ import EventListScreen from "../screens/Events/EventListScreen";
 import EventDetailsScreen from "../screens/Events/EventDetailsScreen";
 import MyBookingsScreen from "../screens/Bookings/MyBookingsScreen";
 import OrganizerDashboardScreen from "../screens/Organizer/OrganizerDashboardScreen";
+import CreateEditEventScreen from "../screens/Organizer/CreateEditEventScreen";
+import EventBookingsScreen from "../screens/Organizer/EventBookingsScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
@@ -34,6 +36,16 @@ function EventsStack() {
   );
 }
 
+function OrganizerStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="OrganizerDashboard" component={OrganizerDashboardScreen} options={{ title: "My Events" }} />
+      <Stack.Screen name="CreateEditEvent" component={CreateEditEventScreen} options={{ title: "Event" }} />
+      <Stack.Screen name="EventBookings" component={EventBookingsScreen} options={{ title: "Event Bookings" }} />
+    </Stack.Navigator>
+  );
+}
+
 function MainTabs() {
   const { profile } = useAuth();
   return (
@@ -43,10 +55,10 @@ function MainTabs() {
         return <Ionicons name={icons[route.name]} size={size} color={color} />;
       },
     })}>
-      <Tab.Screen name="Events" component={EventsStack} />
+      <Tab.Screen name="Events" component={EventsStack} options={{ headerShown: false }} />
       <Tab.Screen name="Bookings" component={MyBookingsScreen} />
       {profile?.role === "organizer" && (
-        <Tab.Screen name="Organizer" component={OrganizerDashboardScreen} />
+        <Tab.Screen name="Organizer" component={OrganizerStack} options={{ headerShown: false }} />
       )}
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
